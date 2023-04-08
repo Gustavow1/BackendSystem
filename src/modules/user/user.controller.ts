@@ -22,6 +22,13 @@ export class UserController {
     res.json(query).send()
   }
 
+  @Get("list")
+  async indexAll(@Headers("authorization") token: string, @Res() res: Response) {
+    const query = await this.userService.indexAll(token)
+    res.statusCode = query.status;
+    res.json(query).send();
+  }
+
   @Post("login")
   async login(@Body() data: UserDTO, @Res() res: Response) {
     const query = await this.userService.login(data)

@@ -51,6 +51,28 @@ export class ProcessesService {
     return await this.prisma.selection_Process.findMany();
   }
 
+  async edit(token: string, processId: string, data: ProcessesDTO) {
+    const isAuthorized = this.prisma.user.findFirst({
+      where: {
+        id: token,
+      },
+    });
+
+    if (!isAuthorized || (await isAuthorized).role === 'Estudante') return { status: 401, message: 'Usuário não autorizado.' };
+    
+    await this.prisma.selection_Process.update({
+      where: {
+        id: processId,
+      },
+      data: {
+        description: data.description,
+        status: data.status || "Aberto"
+      }
+    });
+
+    return {status: 200, message: "Processo atualizado com sucesso!"}
+  }
+
   async close(token: string, processId: string) {
     const isAuthorized = this.prisma.user.findFirst({
       where: {
